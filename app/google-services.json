@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "751869699658",
+    "firebase_url": "https://sendersapp-24de9.firebaseio.com",
+    "project_id": "sendersapp-24de9",
+    "storage_bucket": "sendersapp-24de9.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:751869699658:android:a0daea9754e11895b8a8b3",
+        "android_client_info": {
+          "package_name": "com.example.senderschatapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "751869699658-spof2ngs07g9rhl7nh739ec6lf3lef9p.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.senderschatapp",
+            "certificate_hash": "4b304d74d3ecadf70a0721eb1e943106fa7451b0"
+          }
+        },
+        {
+          "client_id": "751869699658-rp909edf0qgokba37dqu24hemsvogits.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQ2ovoECZzAgYZ9xCHs4Kg-j7lcYDxeE4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "751869699658-rp909edf0qgokba37dqu24hemsvogits.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">SendersChatApp</string>
+    <string name="sign_out">Sign out</string>
+    <string name="welcome_to_senders">Welcome to senders</string>
+    <string name="logo">Logo</string>
+    <string name="login_with_google">Login with google</string>
+    <string name="loading">loading</string>
+    <string name="start">Start</string>
+    <string name="title_activity_chat">Chat</string>
+    <string name="add">add</string>
+    <string name="dsi32">DSI32</string>
+</resources>
