@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Senders</string>
+    <string name="add" translatable="false">ajouter</string>
+    <string name="back" translatable="false">retourner</string>
+    <string name="home">Accueil</string>
+    <string name="loading">Chargement</string>
+    <string name="login_with_google">Connectez avec google</string>
+    <string name="rooms">class</string>
+    <string name="select_your_class_room">Selectionnez votre class</string>
+    <string name="sign_out">"Deconnectez vous "</string>
+    <string name="start">Commencer</string>
+    <string name="welcome_to_senders">Bienvenu sur senders</string>
+    <string name="write_a_message">Ecrire un message</string>
+</resources>

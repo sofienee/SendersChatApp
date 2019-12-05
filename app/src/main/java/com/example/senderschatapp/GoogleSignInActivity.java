@@ -1,17 +1,11 @@
 package com.example.senderschatapp;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.BitmapDrawable;
-import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -20,7 +14,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.snackbar.Snackbar;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,14 +22,8 @@ import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.URL;
-
 public class GoogleSignInActivity extends BaseActivity implements
         View.OnClickListener {
-
     private static final String TAG = "GoogleActivity";
     private static final int RC_SIGN_IN = 9001;
 
@@ -46,18 +33,15 @@ public class GoogleSignInActivity extends BaseActivity implements
 
     private GoogleSignInClient mGoogleSignInClient;
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_google_sign_in);
-
-
-
         // Button listeners
         findViewById(R.id.LogInBtn).setOnClickListener(this);
         findViewById(R.id.SignOutBtn).setOnClickListener(this);
         findViewById(R.id.StartBtn).setOnClickListener(this);
-
         // [START config_signin]
         // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -165,14 +149,13 @@ public class GoogleSignInActivity extends BaseActivity implements
     }
 
 
-
     private void updateUI(FirebaseUser user) {
         hideProgressDialog();
         if (user != null) {
-            User u=new User(user.getUid(),user.getEmail(),user.getPhotoUrl().toString(),user.getDisplayName());
+            //add new users to the data base
+            User u = new User(user.getUid(), user.getEmail(), user.getPhotoUrl().toString(), user.getDisplayName());
             DatabaseReference myRef = database.getReference("users");
-            myRef.setValue(u);
-
+            myRef.child(user.getUid()).setValue(u);
 
 
             findViewById(R.id.StartBtn).setVisibility(View.VISIBLE);
@@ -201,9 +184,10 @@ public class GoogleSignInActivity extends BaseActivity implements
     }
 
     private void StartMainActivity() {
-        Intent intent=new Intent(this, RoomsActivity.class);
+        Intent intent = new Intent(this, RoomsActivity.class);
         startActivity(intent);
 
     }
+
 
 }

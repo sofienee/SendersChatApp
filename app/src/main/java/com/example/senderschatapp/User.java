@@ -37,7 +37,6 @@ public class User {
     }
 
 
-
     public void setNameUser(String nameUser) {
         this.nameUser = nameUser;
     }

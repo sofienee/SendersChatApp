@@ -1,7 +1,9 @@
 package com.example.senderschatapp;
 
 import android.app.ProgressDialog;
+
 import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.android.gms.common.util.VisibleForTesting;
 
 class BaseActivity extends AppCompatActivity {
@@ -24,7 +26,6 @@ class BaseActivity extends AppCompatActivity {
             mProgressDialog.dismiss();
         }
     }
-
 
 
     @Override

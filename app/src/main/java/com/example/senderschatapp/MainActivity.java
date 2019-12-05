@@ -1,17 +1,18 @@
 package com.example.senderschatapp;
 
+import android.content.Context;
 import android.content.Intent;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -34,13 +35,14 @@ public class MainActivity extends AppCompatActivity {
 
     private Button msgBtn;
     private EditText msgEdit;
-    private TextView classtext ;
+    private TextView classtext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        classtext=findViewById(R.id.roomsClass);
+        classtext = findViewById(R.id.roomsClass);
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
@@ -48,62 +50,81 @@ public class MainActivity extends AppCompatActivity {
             classtext.setText(bundle.getString("class"));
             getSupportActionBar().setTitle(bundle.getString("class"));
         }
-       msgBtn=findViewById(R.id.SendBtn);
-       msgEdit=findViewById(R.id.Msg);
+        msgBtn = findViewById(R.id.SendBtn);
+        msgEdit = findViewById(R.id.Msg);
 
 
         // [START initialize_auth]
         // Initialize Firebase Auth
         mAuth = FirebaseAuth.getInstance();
         // [END initialize_auth]
-         final FirebaseUser currentUser = mAuth.getCurrentUser();
+        final FirebaseUser currentUser = mAuth.getCurrentUser();
         msgBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                 Message msg=new Message(currentUser.getDisplayName(),msgEdit.getText().toString(),currentUser.getPhotoUrl().toString());
+                Message msg = new Message(currentUser.getDisplayName(), msgEdit.getText().toString(), currentUser.getPhotoUrl().toString());
 
 
-                // Write a message to the database
-
-                DatabaseReference myRef = database.getReference("messages");
-                myRef.child(classtext.getText().toString()).push().setValue(msg);
-                msgEdit.setText("");
+                // tester if message is empty
+                if (msg.getMsg().length() == 0) {
+                    Toast.makeText(
+                            MainActivity.this,
+                            "Your message is empty",
+                            Toast.LENGTH_SHORT
+                    ).show();
+                }
+                // checks whether mobile is not connected to internet
+                else if (!isNetworkConnected()) {
+                    Toast.makeText(
+                            MainActivity.this,
+                            "There is no internet connection",
+                            Toast.LENGTH_SHORT
+                    ).show();
+                } else {
+                    // Write a message to the database
+                    DatabaseReference myRef = database.getReference("messages");
+                    myRef.child(classtext.getText().toString()).push().setValue(msg);
+                    msgEdit.setText("");
+                }
 
 
             }
 
 
-
         });
-
+        // when data change auto list add messages
         final DatabaseReference myRef = database.getReference("messages").child(classtext.getText().toString());
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                ListView listView=findViewById(R.id.ListMsg);
+                ListView listView = findViewById(R.id.ListMsg);
                 ArrayList<HashMap<String, String>> listItem = new ArrayList<>();
-                     SimpleAdapter adapter = new SimpleAdapter(MainActivity.this,
-                             listItem,
-                             R.layout.itemchat,
-                             new String[]{"msg", "sender"},
-                             new int[]{R.id.msgChat, R.id.userNameItem});
-                     listView.setAdapter(adapter);
+                SimpleAdapter adapter = new SimpleAdapter(MainActivity.this,
+                        listItem,
+                        R.layout.itemchat,
+                        new String[]{"msg", "sender"},
+                        new int[]{R.id.msgChat, R.id.userNameItem});
+                listView.setAdapter(adapter);
 
-                     for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-                         HashMap map;
-                         map = new HashMap<>();
-                         map.put("sender", postSnapshot.child("sender").getValue().toString());
-                         map.put("msg", postSnapshot.child("msg").getValue().toString());
-                         listItem.add(map);
-                         adapter.notifyDataSetChanged();
-                     }
-                 }
+                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                    HashMap map;
+                    map = new HashMap<>();
+                    map.put("sender", postSnapshot.child("sender").getValue().toString());
+                    map.put("msg", postSnapshot.child("msg").getValue().toString());
+                    listItem.add(map);
+                    adapter.notifyDataSetChanged();
+                }
+            }
 
 
             @Override
             public void onCancelled(DatabaseError error) {
                 // Failed to read value
-
+                Toast.makeText(
+                        MainActivity.this,
+                        "Your message didn't sent",
+                        Toast.LENGTH_SHORT
+                ).show();
             }
         });
 
@@ -116,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_bar, menu);
         return true;
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -128,18 +150,24 @@ public class MainActivity extends AppCompatActivity {
                 startRooms();
                 return (true);
         }
-        return(super.onOptionsItemSelected(item));
+        return (super.onOptionsItemSelected(item));
     }
 
     private void startRooms() {
-        Intent intent=new Intent(this, RoomsActivity.class);
+        Intent intent = new Intent(this, RoomsActivity.class);
         startActivity(intent);
     }
 
     private void startHome() {
-        Intent intent=new Intent(this, GoogleSignInActivity.class);
+        Intent intent = new Intent(this, GoogleSignInActivity.class);
         startActivity(intent);
     }
 
+    //This method checks whether mobile is connected to internet and returns true if connected
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null && cm.getActiveNetworkInfo().isConnected();
+    }
 
 }
