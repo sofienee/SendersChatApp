@@ -1,21 +1,20 @@
 package com.example.senderschatapp;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
-import com.google.android.gms.auth.api.signin.GoogleSignIn;
-import com.google.android.gms.auth.api.signin.GoogleSignInClient;
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -26,8 +25,6 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import static android.view.View.*;
 
 public class MainActivity extends AppCompatActivity {
     // [START declare_auth]
@@ -42,12 +39,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         classtext=findViewById(R.id.roomsClass);
 
         Bundle bundle = getIntent().getExtras();
         if (bundle != null) {
 
             classtext.setText(bundle.getString("class"));
+            getSupportActionBar().setTitle(bundle.getString("class"));
         }
        msgBtn=findViewById(R.id.SendBtn);
        msgEdit=findViewById(R.id.Msg);
@@ -67,7 +66,7 @@ public class MainActivity extends AppCompatActivity {
                 // Write a message to the database
 
                 DatabaseReference myRef = database.getReference("messages");
-                myRef.child(currentUser.getUid()).child(classtext.getText().toString()).push().setValue(msg);
+                myRef.child(classtext.getText().toString()).push().setValue(msg);
                 msgEdit.setText("");
 
 
@@ -77,46 +76,29 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-        DatabaseReference myRef = database.getReference("messages").child(currentUser.getUid()).child(classtext.getText().toString());
+        final DatabaseReference myRef = database.getReference("messages").child(classtext.getText().toString());
         myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
-                ImageView imageView;
-                imageView=findViewById(R.id.imgChatRoom);
-
                 ListView listView=findViewById(R.id.ListMsg);
-                ArrayList arrayList=new ArrayList();
                 ArrayList<HashMap<String, String>> listItem = new ArrayList<>();
-                SimpleAdapter adapter = new SimpleAdapter(MainActivity.this,
-                        listItem,
-                        R.layout.itemchat,
-                        new String[]{"img", "msg", "sender"},
-                        new int[]{R.id.imgChatRoom, R.id.msgChat, R.id.userNameItem});
-                listView.setAdapter(adapter);
+                     SimpleAdapter adapter = new SimpleAdapter(MainActivity.this,
+                             listItem,
+                             R.layout.itemchat,
+                             new String[]{"msg", "sender"},
+                             new int[]{R.id.msgChat, R.id.userNameItem});
+                     listView.setAdapter(adapter);
 
+                     for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
+                         HashMap map;
+                         map = new HashMap<>();
+                         map.put("sender", postSnapshot.child("sender").getValue().toString());
+                         map.put("msg", postSnapshot.child("msg").getValue().toString());
+                         listItem.add(map);
+                         adapter.notifyDataSetChanged();
+                     }
+                 }
 
-
-                for (DataSnapshot postSnapshot : dataSnapshot.getChildren()) {
-
-
-                    HashMap map;
-                    map = new HashMap<>();
-                    map.put("sender", postSnapshot.child("sender").getValue().toString());
-                    map.put("msg",postSnapshot.child("msg").getValue().toString());
-                    map.put("img", String.valueOf(R.drawable.ic_person_black_24dp));
-
-                    listItem.add(map);
-
-
-
-
-                    adapter.notifyDataSetChanged();
-
-
-                }
-
-            }
 
             @Override
             public void onCancelled(DatabaseError error) {
@@ -128,6 +110,36 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.menu_bar, menu);
+        return true;
+    }
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.home:
+
+                startHome();
+                return (true);
+            case R.id.rooms:
+
+                startRooms();
+                return (true);
+        }
+        return(super.onOptionsItemSelected(item));
+    }
+
+    private void startRooms() {
+        Intent intent=new Intent(this, RoomsActivity.class);
+        startActivity(intent);
+    }
+
+    private void startHome() {
+        Intent intent=new Intent(this, GoogleSignInActivity.class);
+        startActivity(intent);
+    }
 
 
 }

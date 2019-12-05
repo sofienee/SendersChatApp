@@ -37,4 +37,10 @@ public class Message {
         this.msg = msg;
         this.urlImg = urlImg;
     }
+
+    @Override
+    public String toString() {
+        return  sender ;
+
+    }
 }

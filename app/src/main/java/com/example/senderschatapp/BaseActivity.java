@@ -1,13 +1,8 @@
 package com.example.senderschatapp;
 
 import android.app.ProgressDialog;
-import android.content.Context;
-import android.view.inputmethod.InputMethodManager;
-
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.gms.common.util.VisibleForTesting;
-import com.google.firebase.database.core.view.View;
 
 class BaseActivity extends AppCompatActivity {
 

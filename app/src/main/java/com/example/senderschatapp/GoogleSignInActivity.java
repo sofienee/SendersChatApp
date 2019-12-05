@@ -4,6 +4,10 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -24,6 +28,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
 
 public class GoogleSignInActivity extends BaseActivity implements
         View.OnClickListener {
@@ -163,11 +172,15 @@ public class GoogleSignInActivity extends BaseActivity implements
             User u=new User(user.getUid(),user.getEmail(),user.getPhotoUrl().toString(),user.getDisplayName());
             DatabaseReference myRef = database.getReference("users");
             myRef.setValue(u);
+
+
+
+            findViewById(R.id.StartBtn).setVisibility(View.VISIBLE);
             findViewById(R.id.LogInBtn).setVisibility(View.GONE);
             findViewById(R.id.SignOutBtn).setVisibility(View.VISIBLE);
         } else {
 
-
+            findViewById(R.id.StartBtn).setVisibility(View.GONE);
             findViewById(R.id.LogInBtn).setVisibility(View.VISIBLE);
             findViewById(R.id.SignOutBtn).setVisibility(View.GONE);
         }
@@ -190,5 +203,7 @@ public class GoogleSignInActivity extends BaseActivity implements
     private void StartMainActivity() {
         Intent intent=new Intent(this, RoomsActivity.class);
         startActivity(intent);
+
     }
+
 }
